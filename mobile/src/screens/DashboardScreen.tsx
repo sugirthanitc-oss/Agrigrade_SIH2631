@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   RefreshControl,
   StatusBar,
+  Alert,
+  Platform,
   useWindowDimensions,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -26,7 +28,7 @@ interface Props {
 }
 
 export const DashboardScreen: React.FC<Props> = ({ navigation }) => {
-  const { user, dashboardStats, refreshDashboard, isLoadingStats } = useAssessment();
+  const { user, setUser, dashboardStats, refreshDashboard, isLoadingStats } = useAssessment();
   const { t, language, toggleLanguage } = useLanguage();
   const [refreshing, setRefreshing] = useState(false);
   const [recentAssessments, setRecentAssessments] = useState<any[]>([]);
@@ -57,11 +59,46 @@ export const DashboardScreen: React.FC<Props> = ({ navigation }) => {
     setRefreshing(false);
   };
 
+  const handleLogout = () => {
+    const doLogout = () => {
+      setUser(null);
+      navigation.replace('Login');
+    };
+
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && window.confirm) {
+      if (
+        window.confirm(
+          language === 'ta'
+            ? 'நிச்சயமாக உங்கள் கணக்கிலிருந்து வெளியேற விரும்புகிறீர்களா?'
+            : 'Are you sure you want to log out of your session?'
+        )
+      ) {
+        doLogout();
+      }
+    } else {
+      Alert.alert(
+        (t as any).logoutConfirmTitle || (language === 'ta' ? 'வெளியேறவா?' : 'Log Out?'),
+        (t as any).logoutConfirmMsg ||
+          (language === 'ta'
+            ? 'நிச்சயமாக உங்கள் கணக்கிலிருந்து வெளியேற விரும்புகிறீர்களா?'
+            : 'Are you sure you want to log out of your session?'),
+        [
+          { text: (t as any).cancel || (language === 'ta' ? 'ரத்து' : 'Cancel'), style: 'cancel' },
+          {
+            text: (t as any).logout || (language === 'ta' ? 'வெளியேறு' : 'Logout'),
+            style: 'destructive',
+            onPress: doLogout,
+          },
+        ]
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
 
-      {/* Top Nav / App Bar with Language Switcher */}
+      {/* Top Nav / App Bar with Language Switcher & Logout */}
       <View style={styles.topBar}>
         <View style={[styles.topBarInner, isLargeScreen && styles.innerLarge]}>
           <View style={styles.brandRow}>
@@ -73,17 +110,30 @@ export const DashboardScreen: React.FC<Props> = ({ navigation }) => {
             </View>
           </View>
 
-          {/* Language Switcher Toggle Button */}
-          <TouchableOpacity
-            style={styles.langToggleBtn}
-            onPress={toggleLanguage}
-            activeOpacity={0.8}
-            accessibilityLabel="Switch Language"
-          >
-            <Text style={styles.langToggleText}>
-              {language === 'ta' ? '🌐 EN / தமிழ்' : '🌐 தமிழ் / EN'}
-            </Text>
-          </TouchableOpacity>
+          {/* Top Actions: Language Switcher & Logout */}
+          <View style={styles.topRightActions}>
+            <TouchableOpacity
+              style={styles.langToggleBtn}
+              onPress={toggleLanguage}
+              activeOpacity={0.8}
+              accessibilityLabel="Switch Language"
+            >
+              <Text style={styles.langToggleText}>
+                {language === 'ta' ? '🌐 EN / தமிழ்' : '🌐 தமிழ் / EN'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.logoutBtn}
+              onPress={handleLogout}
+              activeOpacity={0.8}
+              accessibilityLabel="Log Out"
+            >
+              <Text style={styles.logoutBtnText}>
+                🚪 {(t as any).logout || (language === 'ta' ? 'வெளியேறு' : 'Logout')}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
@@ -273,6 +323,11 @@ const styles = StyleSheet.create({
     color: '#A7F3D0',
     marginTop: 2,
   },
+  topRightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   langToggleBtn: {
     backgroundColor: 'rgba(255, 255, 255, 0.18)',
     borderWidth: 1,
@@ -280,13 +335,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: RADIUS.full,
-    marginLeft: SPACING.sm,
   },
   langToggleText: {
     color: COLORS.textInverse,
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 0.3,
+  },
+  logoutBtn: {
+    backgroundColor: 'rgba(239, 68, 68, 0.25)',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.55)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: RADIUS.full,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoutBtnText: {
+    color: '#FEE2E2',
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.2,
   },
   scrollContent: {
     paddingVertical: SPACING.md,

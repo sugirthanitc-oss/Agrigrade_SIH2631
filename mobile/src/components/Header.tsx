@@ -9,6 +9,8 @@ interface HeaderProps {
   onBack?: () => void;
   rightAction?: React.ReactNode;
   showLangToggle?: boolean;
+  showLogout?: boolean;
+  onLogout?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -17,6 +19,8 @@ export const Header: React.FC<HeaderProps> = ({
   onBack,
   rightAction,
   showLangToggle = false,
+  showLogout = false,
+  onLogout,
 }) => {
   const { width } = useWindowDimensions();
   const isLargeScreen = width >= RESPONSIVE.tabletBreakpoint;
@@ -39,17 +43,33 @@ export const Header: React.FC<HeaderProps> = ({
 
         {rightAction ? (
           <View style={styles.rightContainer}>{rightAction}</View>
-        ) : showLangToggle ? (
-          <TouchableOpacity
-            style={styles.langToggleBtn}
-            onPress={toggleLanguage}
-            activeOpacity={0.8}
-            accessibilityLabel="Switch Language"
-          >
-            <Text style={styles.langToggleText}>
-              {language === 'ta' ? '🌐 EN / தமிழ்' : '🌐 தமிழ் / EN'}
-            </Text>
-          </TouchableOpacity>
+        ) : (showLangToggle || showLogout) ? (
+          <View style={styles.rightActionsRow}>
+            {showLangToggle && (
+              <TouchableOpacity
+                style={styles.langToggleBtn}
+                onPress={toggleLanguage}
+                activeOpacity={0.8}
+                accessibilityLabel="Switch Language"
+              >
+                <Text style={styles.langToggleText}>
+                  {language === 'ta' ? '🌐 EN / தமிழ்' : '🌐 தமிழ் / EN'}
+                </Text>
+              </TouchableOpacity>
+            )}
+            {showLogout && onLogout && (
+              <TouchableOpacity
+                style={styles.logoutBtn}
+                onPress={onLogout}
+                activeOpacity={0.8}
+                accessibilityLabel="Logout"
+              >
+                <Text style={styles.logoutBtnText}>
+                  🚪 {language === 'ta' ? 'வெளியேறு' : 'Logout'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
         ) : null}
       </View>
     </View>
@@ -112,6 +132,12 @@ const styles = StyleSheet.create({
   rightContainer: {
     marginLeft: SPACING.sm,
   },
+  rightActionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginLeft: SPACING.sm,
+  },
   langToggleBtn: {
     backgroundColor: 'rgba(255, 255, 255, 0.18)',
     borderWidth: 1,
@@ -119,10 +145,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: RADIUS.full,
-    marginLeft: SPACING.sm,
   },
   langToggleText: {
     color: COLORS.textInverse,
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  logoutBtn: {
+    backgroundColor: 'rgba(239, 68, 68, 0.25)',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.55)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: RADIUS.full,
+  },
+  logoutBtnText: {
+    color: '#FEE2E2',
     fontSize: 11,
     fontWeight: '700',
   },
