@@ -1,0 +1,11 @@
+# YOLO Object Detection Dataset for Onion Quality Assessment
+path: C:/Users/sugirthan/.gemini/antigravity/scratch/onion-quality-ai/dataset
+train: images/train
+val: images/val
+
+names:
+  0: healthy
+  1: damaged
+  2: rotten
+  3: sprouted
+  4: undersized

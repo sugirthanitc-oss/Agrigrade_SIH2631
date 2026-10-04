@@ -1,0 +1,12 @@
+# YOLO Dataset Configuration for Onion Quality Assessment
+path: ../dataset
+train: images/train
+val: images/val
+
+# 5 target classes for onion grading
+names:
+  0: healthy
+  1: damaged
+  2: rotten
+  3: sprouted
+  4: undersized

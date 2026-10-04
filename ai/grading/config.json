@@ -1,0 +1,27 @@
+{
+  "ruleset_version": "1.0.0",
+  "name": "Standard Agricultural Onion Grading Rules",
+  "thresholds": {
+    "grade_a": {
+      "min_healthy_pct": 80.0,
+      "max_rotten_pct": 2.0,
+      "max_damaged_pct": 8.0,
+      "max_sprouted_pct": 5.0,
+      "max_undersized_pct": 10.0
+    },
+    "grade_b": {
+      "min_healthy_pct": 60.0,
+      "max_rotten_pct": 5.0,
+      "max_damaged_pct": 15.0,
+      "max_sprouted_pct": 12.0,
+      "max_undersized_pct": 20.0
+    },
+    "urs": {
+      "description": "Under Regular Standard / Unfit for Commercial Storage & Fresh Market",
+      "critical_rotten_pct_threshold": 5.0,
+      "critical_defect_sum_pct_threshold": 35.0
+    }
+  },
+  "confidence_threshold": 0.35,
+  "iou_threshold": 0.45
+}
